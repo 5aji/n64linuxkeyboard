@@ -4,3 +4,9 @@
 [submodule "tools/musl-cross-make"]
 	path = tools/linux-toolchain/musl-cross-make
 	url = git@github.com:richfelker/musl-cross-make.git
+[submodule "src/linux"]
+	path = src/linux
+	url = git@github.com:kschamplin/linux.git
+[submodule "src/n64bootloader"]
+	path = src/n64bootloader
+	url = git@github.com:clbr/n64bootloader.git
