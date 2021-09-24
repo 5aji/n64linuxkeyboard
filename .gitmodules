@@ -1,0 +1,6 @@
+[submodule "tools/libdragon"]
+	path = tools/libdragon-toolchain/libdragon
+	url = git@github.com:clbr/libdragon.git
+[submodule "tools/musl-cross-make"]
+	path = tools/linux-toolchain/musl-cross-make
+	url = git@github.com:richfelker/musl-cross-make.git
