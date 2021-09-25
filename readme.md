@@ -10,5 +10,5 @@
 `src/` - source trees for various components go here, like the linux kernel.
 - `linux`: the obvious one, a submodule pointing to our linux fork
 - `n64bootloader`: submodule for `clbr/n64bootloader`, the bootloader code.
-
+- `teensy`: The code for the teensy controller emulator.
 
