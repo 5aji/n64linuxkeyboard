@@ -12,14 +12,15 @@ RUN apt-get update && \
     apt-get clean && \
     cd ./libdragon-source && \
     cp -r ./tools /tmp/tools && \
-    cd .. && \
     cd /tmp/tools && \
-    export JOBS=${JOBS:-`getconf _NPROCESSORS_ONLN`} && \
+    export JOBS=$(nproc) && \
     ./build && \
+    make && \
+    make install && \
     cd /workdir && \
     rm -rf /tmp/tools && \
     rm -rf * && \
-    find /usr/local/bin -type f | xargs strip && \
-    find /usr/local/libexec/gcc/mips64-elf/${GCC_V} -type f | xargs strip && \
+    find ${N64_INST}/bin -type f | xargs strip && \
+    find ${N64_INST}/libexec/gcc/mips64-elf/${GCC_V} -type f | xargs strip && \
     rm -rf /usr/local/share/locale/* && \
     apt autoremove -yq
