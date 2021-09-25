@@ -2,7 +2,7 @@
 FROM debian
 
 ENV N64_INST=/usr/local
-
+ENV GCC_V=8.2.0
 WORKDIR /workdir
 
 COPY . ./libdragon-source
@@ -14,21 +14,12 @@ RUN apt-get update && \
     cp -r ./tools /tmp/tools && \
     cd .. && \
     cd /tmp/tools && \
-	export JOBS=${JOBS:-`getconf _NPROCESSORS_ONLN`} && \
-	export GCC_V=8.2.0 && \
+    export JOBS=${JOBS:-`getconf _NPROCESSORS_ONLN`} && \
     ./build && \
     cd /workdir && \
     rm -rf /tmp/tools && \
     rm -rf * && \
     find /usr/local/bin -type f | xargs strip && \
-    strip /usr/local/libexec/gcc/mips64-elf/8.2.0/plugin/gengtype && \
-    strip /usr/local/libexec/gcc/mips64-elf/8.2.0/liblto_plugin.so.0.0.0 && \
-    strip /usr/local/libexec/gcc/mips64-elf/8.2.0/liblto_plugin.so.0 && \
-    strip /usr/local/libexec/gcc/mips64-elf/8.2.0/lto-wrapper && \
-    strip /usr/local/libexec/gcc/mips64-elf/8.2.0/collect2 && \
-    strip /usr/local/libexec/gcc/mips64-elf/8.2.0/cc1plus && \
-    strip /usr/local/libexec/gcc/mips64-elf/8.2.0/cc1 && \
-    strip /usr/local/libexec/gcc/mips64-elf/8.2.0/install-tools/fixincl && \
-    strip /usr/local/libexec/gcc/mips64-elf/8.2.0/lto1 && \
+    find /usr/local/libexec/gcc/mips64-elf/${GCC_V} -type f | xargs strip && \
     rm -rf /usr/local/share/locale/* && \
     apt autoremove -yq
