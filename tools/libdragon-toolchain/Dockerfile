@@ -1,5 +1,5 @@
 #clbr libdragon
-FROM debian
+FROM docker.io/debian
 
 ENV N64_INST=/usr/local
 ENV GCC_V=8.2.0
@@ -7,6 +7,7 @@ WORKDIR /workdir
 
 COPY . ./sources
 
+COPY ./size2bin /usr/bin/size2bin
 RUN apt-get update && \
 	apt-get install -yq wget bzip2 gcc g++ make file libmpfr-dev libmpc-dev libpng-dev zlib1g-dev texinfo git gcc-multilib && \
 	apt-get clean && \
