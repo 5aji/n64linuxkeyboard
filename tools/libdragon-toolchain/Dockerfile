@@ -17,8 +17,11 @@ RUN apt-get update && \
 	cd /workdir/sources/libdragon/tools && \
 	make && \
 	make install && \
+	cd /workdir/sources/libdragon && \
+	make && \
+	make install && \
 	cd /workdir && \
 	rm -rf /tmp/build * && \
 	find ${N64_INST}/bin -type f | xargs strip && \
 	rm -rf /usr/local/share/locale/* && \
-	apt autoremove -yq
+	apt-get autoremove -yq
