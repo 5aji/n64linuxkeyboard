@@ -7,6 +7,3 @@
 [submodule "src/linux"]
 	path = src/linux
 	url = git@github.com:kschamplin/linux.git
-[submodule "src/n64bootloader"]
-	path = src/n64bootloader
-	url = git@github.com:clbr/n64bootloader.git
