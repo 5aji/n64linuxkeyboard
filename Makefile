@@ -24,8 +24,8 @@ bootloader:
 	$(LIBDRAGON_PREFIX) make -C src/n64bootloader
 
 # linux stuff
-# FIXME: needs CPIO integration
 LINUX_PATH=src/linux/vmlinux.32
+# variables for linux kernel
 CPIO_PATH ?=bin/extracted.cpio
 KCONFIG_PATH ?=bin/Kconfig
 
@@ -36,19 +36,32 @@ linux:
 		-j$$(nproc) -C src/linux
 
 # size binary files for inclusion into the n64 image
-linux_size.bin: $(LINUX_PATH)
-	$(LIBDRAGON_PREFIX) size2bin $^ $@
+linux_size.bin: linux
+	$(LIBDRAGON_PREFIX) size2bin $(LINUX_PATH) $@
 
-# FIXME: squashFS is hardcoded/incomplete
-disk_size.bin: mydisk
+### SQUASHFS CONFIGURATION
+SQUASHFS_PATH = bin/extracted.squashfs
+disk_size.bin: $(SQUASHFS_PATH)
 	$(LIBDRAGON_PREFIX) size2bin $^ $@
 
 
 # final z64 output
-N64_FLAGS = -l 8M -h header -t "Linux"
+N64_HEADER = bin/header.n64
+N64_FLAGS = -l 8M -h $(N64_HEADER) -t "Linux"
 
-linux.z64: bootloader linux
+linux.z64: bootloader linux linux_size.bin disk_size.bin
+ 	DISKOFF=$$(ls -l $(LINUX_PATH) | awk '{print $$5}'); \
+ 	DISKOFF=$$((((DISKOFF + 4095) & ~4095) + 1048576)); \
 	$(LIBDRAGON_PREFIX) n64tool $(N64_FLAGS) -o $@ $(BOOTLOADER_PATH) \
+		-s 1048568B disk_size.bin
+		-s 1048572B linux_size.bin
+		-s 1M $(LINUX_PATH)
+		-s $${DISKOFF}B $(SQUASHFS_PATH)
+	$(LIBDRAGON_PREFIX) chksum64 $@
+
 
 clean:
 	$(LINUX_PREFIX) make clean -C src/linux
+	$(LIBDRAGON_PREFIX) make clean -C src/n64bootloader
+	rm *.bin
+
