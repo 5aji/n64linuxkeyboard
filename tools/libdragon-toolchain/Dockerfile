@@ -7,10 +7,10 @@ WORKDIR /workdir
 
 COPY . ./sources
 
-COPY ./size2bin /usr/bin/size2bin
 RUN apt-get update && \
 	apt-get install -yq wget bzip2 gcc g++ make file libmpfr-dev libmpc-dev libpng-dev zlib1g-dev texinfo git gcc-multilib && \
 	apt-get clean && \
+	gcc sources/size2bin.c -static -o /usr/bin/size2bin && \
 	cp ./sources/build /tmp && \
 	cd /tmp && \
 	export JOBS=$(nproc) && \

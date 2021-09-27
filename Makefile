@@ -11,10 +11,10 @@ else
 endif
 DOCKER_BASE +=run --rm -v ${PWD}:${WORKDIR} # mount pwd and rm container after finish
 
-LIBDRAGON_PREFIX = ${DOCKER_BASE} libdragon-toolchain
+LIBDRAGON_PREFIX = ${DOCKER_BASE} libdragon-toolchain 
 LINUX_PREFIX = ${DOCKER_BASE} linux-toolchain 
 
-.PHONY: all bootloader linux
+.PHONY: all bootloader linux clean
 all: linux.z64
 
 # Bootloader stuff
@@ -50,12 +50,12 @@ N64_HEADER = bin/header.n64
 N64_FLAGS = -l 8M -h $(N64_HEADER) -t "Linux"
 
 linux.z64: bootloader linux linux_size.bin disk_size.bin
- 	DISKOFF=$$(ls -l $(LINUX_PATH) | awk '{print $$5}'); \
- 	DISKOFF=$$((((DISKOFF + 4095) & ~4095) + 1048576)); \
+	DISKOFF=$$(ls -l $(LINUX_PATH) | awk '{print $$5}'); \
+	DISKOFF=$$((((DISKOFF + 4095) & ~4095) + 1048576)); \
 	$(LIBDRAGON_PREFIX) n64tool $(N64_FLAGS) -o $@ $(BOOTLOADER_PATH) \
-		-s 1048568B disk_size.bin
-		-s 1048572B linux_size.bin
-		-s 1M $(LINUX_PATH)
+		-s 1048568B disk_size.bin \
+		-s 1048572B linux_size.bin \
+		-s 1M $(LINUX_PATH) \
 		-s $${DISKOFF}B $(SQUASHFS_PATH)
 	$(LIBDRAGON_PREFIX) chksum64 $@
 
