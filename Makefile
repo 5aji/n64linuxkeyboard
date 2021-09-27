@@ -26,9 +26,14 @@ bootloader:
 # linux stuff
 # FIXME: needs CPIO integration
 LINUX_PATH=src/linux/vmlinux.32
+CPIO_PATH ?=bin/extracted.cpio
+KCONFIG_PATH ?=bin/Kconfig
 
 linux:
-	$(LINUX_PREFIX) make ARCH=mips CROSS_COMPILE=mips64-linux-musln32- -j$$(nproc) -C src/linux
+	$(LINUX_PREFIX) make ARCH=mips CROSS_COMPILE=mips64-linux-musln32- \
+		CONFIG_INITRAMFS_SOURCE=../../$(CPIO_PATH) \
+		KCONFIG_CONFIG=../../$(KCONFIG_PATH) \
+		-j$$(nproc) -C src/linux
 
 # size binary files for inclusion into the n64 image
 linux_size.bin: $(LINUX_PATH)
@@ -45,3 +50,5 @@ N64_FLAGS = -l 8M -h header -t "Linux"
 linux.z64: bootloader linux
 	$(LIBDRAGON_PREFIX) n64tool $(N64_FLAGS) -o $@ $(BOOTLOADER_PATH) \
 
+clean:
+	$(LINUX_PREFIX) make clean -C src/linux
