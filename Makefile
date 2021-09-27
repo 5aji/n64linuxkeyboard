@@ -4,7 +4,7 @@
 WORKDIR=/workdir
 
 # use sudo if docker is present else use podman
-ifneq (, $(shell which podman))
+ifneq (, $(@shell which podman))
 	DOCKER_BASE = podman
 else
 	DOCKER_BASE = sudo docker
@@ -28,7 +28,7 @@ bootloader:
 LINUX_PATH=src/linux/vmlinux.32
 
 linux:
-	$(LINUX_PREFIX) make -C src/linux
+	$(LINUX_PREFIX) make ARCH=mips CROSS_COMPILE=mips64-linux-musln32- -j$$(nproc) -C src/linux
 
 # size binary files for inclusion into the n64 image
 linux_size.bin: $(LINUX_PATH)
