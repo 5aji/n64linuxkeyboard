@@ -14,8 +14,13 @@ DOCKER_BASE +=run --rm -v ${PWD}:${WORKDIR} # mount pwd and rm container after f
 LIBDRAGON_PREFIX = ${DOCKER_BASE} libdragon-toolchain 
 LINUX_PREFIX = ${DOCKER_BASE} linux-toolchain 
 
-.PHONY: all bootloader linux clean
+.PHONY: all bootloader linux cpio clean
 all: linux.z64
+
+# CPIO stuff
+CPIO_PATH = src/cpio/mycpio.txt
+cpio:
+	$(LINUX_PREFIX) make -C src/cpio
 
 # Bootloader stuff
 BOOTLOADER_PATH=src/n64bootloader/bootloader.bin
@@ -26,12 +31,12 @@ bootloader:
 # linux stuff
 LINUX_PATH=src/linux/vmlinux.32
 # variables for linux kernel
-CPIO_PATH ?=bin/extracted.cpio
+CONFIG_INITRAMFS_SOURCE ?= $(CPIO_PATH)
 KCONFIG_PATH ?=bin/Kconfig
 
-linux:
+linux: cpio
 	$(LINUX_PREFIX) make ARCH=mips CROSS_COMPILE=mips64-linux-musln32- \
-		CONFIG_INITRAMFS_SOURCE=../../$(CPIO_PATH) \
+		CONFIG_INITRAMFS_SOURCE=../../$(CONFIG_INITRAMFS_SOURCE) \
 		KCONFIG_CONFIG=../../$(KCONFIG_PATH) \
 		-j$$(nproc) -C src/linux
 
@@ -62,6 +67,7 @@ linux.z64: bootloader linux linux_size.bin disk_size.bin
 
 clean:
 	$(LINUX_PREFIX) make clean -C src/linux
+	$(LINUX_PREFIX) make clean -C src/cpio
 	$(LIBDRAGON_PREFIX) make clean -C src/n64bootloader
 	rm *.bin
 
